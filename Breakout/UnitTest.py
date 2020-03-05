@@ -16,19 +16,22 @@ class UnitTest:
                               'Database=H5_SQL;'
                               'Trusted_Connection=yes;')
 
-        # Insert at new user into the database
+        # Insert a new user into the database
         cursor = conn.cursor()
         cursor.execute("insert into %s (ID, Username, Score) values (%d, \'%s\', %d)" % (self.table, self.uid, self.user, self.score))
         conn.commit()
 
+        # Check if the user was created
         rows = cursor.execute("select * from %s" % self.table)
         usercount = 0
         for row in list(rows):
+            # Delete the user if it was created
             if row[2] == 9999:
                 usercount += 1
                 cursor.execute("delete from %s where ID = %s" % (self.table, self.uid))
                 conn.commit()
                 print('The unit test completed sucessfully, the database is ready')
+        # If the user was not created, report error
         if usercount == 0:
             print('The unit test failed, the experimental user was not created')
 
